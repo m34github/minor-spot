@@ -1,0 +1,24 @@
+{
+  "userid01" : {
+    "password" : {
+      "pwdid01" : {
+        "comment" : "",
+        "password" : "P@ssw0rd",
+        "title" : "Nomura",
+        "url" : "",
+        "username" : "test@nri.co.jp"
+      },
+      "pwdid02" : {
+        "comment" : "",
+        "password" : "testDMM",
+        "title" : "DMM Bitcoin",
+        "url" : "",
+        "username" : "test_dmm"
+      }
+    },
+    "profile" : {
+      "id" : "0qPY7B0UQVYsbG9TLs9WHCvol6p1",
+      "name" : "test"
+    }
+  }
+}
