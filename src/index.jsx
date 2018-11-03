@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from './peterApp/index.jsx';
+import App from './minorSpotApp/index.jsx';
 
 ReactDOM.render(
   <App />,

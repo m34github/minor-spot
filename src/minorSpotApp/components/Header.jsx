@@ -66,7 +66,7 @@ class Header extends React.Component {
                 className={header.grow}
                 style={{ fontFamily: '"Denk One", sans-serif' }}
               >
-                { props.transparent ? '' : 'N-Peter' }
+                { props.transparent ? '' : 'Minor Spot' }
               </Typography>
             }
             {

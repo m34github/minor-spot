@@ -6,13 +6,14 @@ import { Redirect, withRouter } from 'react-router-dom';
 import Loader from './Loader.jsx';
 
 type Props = {
-  checkAuth: func
+  checkAuth: func,
+  login: object
 };
 
 class Authed extends React.Component<Props> {
   constructor(props) {
     super(props);
-    props.checkAuth();
+    props.checkAuth(props.login.payload.uid);
   }
 
   render() {

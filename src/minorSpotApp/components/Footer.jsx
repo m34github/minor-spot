@@ -37,22 +37,10 @@ class Footer extends React.Component<Props> {
           showLabels
         >
           <BottomNavigationAction
-            label="Personal"
+            label="Spot"
             icon={<Icon>account_balance_wallet</Icon>}
-            value="personal"
+            value="spot"
             onClick={() => { props.history.push('/'); }}
-          />
-          <BottomNavigationAction
-            label="Banking"
-            icon={<Icon>account_balance</Icon>}
-            value="banking"
-            disabled
-          />
-          <BottomNavigationAction
-            label="Password"
-            icon={<Icon>vpn_key</Icon>}
-            value="password"
-            onClick={() => { props.history.push('/password'); }}
           />
           <BottomNavigationAction
             label="Settings"
