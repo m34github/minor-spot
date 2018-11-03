@@ -18,26 +18,20 @@ import Footer from './Footer.jsx';
 import styles from '../styles/';
 
 type Props = {
-  loadPasswordData: func
+  loadSpotList: func
 };
 
-class Password extends React.Component<Props> {
+class SpotList extends React.Component<Props> {
   constructor(props) {
     super(props);
-    props.loadPasswordData();
+    props.loadSpotList();
   }
 
   render() {
     const { props } = this;
     const { password } = styles;
 
-    const avatarize = (title) => {
-      return title.length < 2 ?
-        title[0] :
-        title[0] + title[1];
-    };
-
-    if (!props.password.meta.isLoaded) {
+    if (!props.spot.meta.isLoaded) {
       return (
         <Loader />
       );
@@ -50,15 +44,13 @@ class Password extends React.Component<Props> {
         <section className={password.main}>
           <List>
             {
-              Object.values(props.password.payload.passwords).map(p => (
-                <section key={p.title}>
+              props.spot.payload.data.spots.map(d => (
+                <section key={d.name}>
                   <ListItem button>
                     <ListItemAvatar>
-                      <Avatar>
-                        {avatarize(p.title)}
-                      </Avatar>
+                      <Avatar>あ</Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={p.title} />
+                    <ListItemText primary={d.name} />
                   </ListItem>
                   <Divider />
                 </section>
@@ -71,16 +63,16 @@ class Password extends React.Component<Props> {
           <Button
             variant="fab"
             color="primary"
-            onClick={() => { props.history.push('/password/regist'); }}
+            onClick={() => { props.history.push('/detail'); }}
           >
             <Icon>add</Icon>
           </Button>
         </section>
 
-        <Footer value="password" />
+        <Footer value="spot" />
       </article>
     );
   }
 }
 
-export default Password;
+export default SpotList;

@@ -8,13 +8,14 @@ import Loader from './Loader.jsx';
 import styles from '../styles/';
 
 type Props = {
-  checkAuth: func
+  checkAuth: func,
+  login: object
 };
 
 class Login extends React.Component<Props> {
   constructor(props) {
     super(props);
-    props.checkAuth();
+    props.checkAuth(props.login.payload.uid);
     this.state = {
       emailRef: React.createRef(),
       passwordRef: React.createRef()

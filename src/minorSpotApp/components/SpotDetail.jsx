@@ -4,7 +4,7 @@ import { Button, Grid, TextField } from '@material-ui/core';
 import { Header } from '../containers/Login';
 import styles from '../styles/';
 
-class PasswordRegister extends React.Component {
+class SpotDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -156,4 +156,4 @@ class PasswordRegister extends React.Component {
   }
 }
 
-export default PasswordRegister;
+export default SpotDetail;

@@ -10,8 +10,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  checkAuth: () => {
-    dispatch(module.checkAuth());
+  checkAuth: (uid) => {
+    dispatch(module.checkAuth(uid));
   },
   tryLogin: (email, password) => {
     dispatch(module.tryLogin(email, password));
