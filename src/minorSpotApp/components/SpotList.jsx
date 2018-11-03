@@ -63,7 +63,7 @@ class SpotList extends React.Component<Props> {
           <Button
             variant="fab"
             color="primary"
-            onClick={() => { props.history.push('/detail'); }}
+            onClick={() => { props.history.push('/regist'); }}
           >
             <Icon>add</Icon>
           </Button>

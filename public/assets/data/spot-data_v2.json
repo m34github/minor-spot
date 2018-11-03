@@ -1,0 +1,39 @@
+[
+  {
+    "spot": [
+      {
+        "id": "spot-id-01",
+        "title": "ドローン飛ばし放題な公園",
+        "open": "00:00",
+        "close": "24:00",
+        "place": "お台場海浜公園"
+      },
+      {
+        "id": "spot-id-02",
+        "title": "線路でランニング！",
+        "open": "01:00",
+        "close": "04:30",
+        "place": "東京テレポート駅"
+      },
+      {
+        "id": "spot-id-03",
+        "title": "パルクール in オフィスビル",
+        "open": "23:00",
+        "close": "06:00",
+        "place": "テレコムセンター"
+      }
+    ]
+  },
+  {
+    "user": [
+      {
+        "name": "Bechan",
+        "gender": "female"
+      },
+      {
+        "name": "Hisayan",
+        "gender": "male"
+      }
+    ]
+  }
+]
