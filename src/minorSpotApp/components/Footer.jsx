@@ -31,6 +31,7 @@ class Footer extends React.Component<Props> {
     return (
       <section className={footer.root}>
         <Divider />
+
         <BottomNavigation
           value={state.value}
           onChange={(event, value) => { this.handleChange(event, value); }}
@@ -38,7 +39,7 @@ class Footer extends React.Component<Props> {
         >
           <BottomNavigationAction
             label="Spot"
-            icon={<Icon>account_balance_wallet</Icon>}
+            icon={<Icon>place</Icon>}
             value="spot"
             onClick={() => { props.history.push('/'); }}
           />

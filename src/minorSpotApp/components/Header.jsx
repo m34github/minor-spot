@@ -11,35 +11,12 @@ class Header extends React.Component {
 
     return (
       <section className={header.root}>
-        <AppBar
-          color="default"
-          position={
-            props.transparent ?
-            'fixed' :
-            'static'
-          }
-          style={
-            props.transparent ?
-            {
-              background: 'rgba(0, 0, 0, 0)',
-              boxShadow: 'none'
-            } : {
-              boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)'
-            }
-          }
-        >
+        <AppBar color="default" position="static">
           <Toolbar variant="dense">
             {
               props.sub ?
               <IconButton color="inherit" onClick={() => { props.history.goBack(); }}>
-                <Icon
-                  style={
-                    props.transparent ?
-                    {
-                      color: '#fff'
-                    } : {}
-                  }
-                >
+                <Icon>
                   arrow_back_ios
                 </Icon>
               </IconButton>
@@ -48,49 +25,20 @@ class Header extends React.Component {
                 <Icon />
               </IconButton>
             }
-            {
-              props.title ?
-              <Typography
-                align="center"
-                variant="h6"
-                color="textPrimary"
-                className={header.grow}
-              >
-                {props.title}
-              </Typography>
-              :
-              <Typography
-                align="center"
-                variant="h5"
-                color="textPrimary"
-                className={header.grow}
-                style={{ fontFamily: '"Denk One", sans-serif' }}
-              >
-                { props.transparent ? '' : 'Minor Spot' }
-              </Typography>
-            }
-            {
-              props.sub ?
-              <IconButton disabled>
-                <Icon />
-              </IconButton>
-              :
-              <IconButton
-                color="inherit"
-                onClick={() => { props.tryLogout(); }}
-              >
-                <Icon
-                  style={
-                    props.transparent ?
-                    {
-                      color: '#fff'
-                    } : {}
-                  }
-                >
-                  exit_to_app
-                </Icon>
-              </IconButton>
-            }
+
+            <Typography
+              align="center"
+              variant="h5"
+              color="textPrimary"
+              className={header.grow}
+              style={{ fontFamily: '"Denk One", sans-serif' }}
+            >
+              Minor Spot
+            </Typography>
+
+            <IconButton disabled>
+              <Icon />
+            </IconButton>
           </Toolbar>
         </AppBar>
       </section>

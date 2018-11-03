@@ -3,8 +3,8 @@ import axios from 'axios';
 const ERROR = 'ERROR';
 const LOAD_SPOT_LIST = 'LOAD_SPOT_LIST';
 
-const loadSpotList = () => (dispatch) => {
-  axios.get('/assets/data/spot-data.json')
+const loadSpotList = (url) => (dispatch) => {
+  axios.get(url)
     .then(result => {
       dispatch({
         type: LOAD_SPOT_LIST,

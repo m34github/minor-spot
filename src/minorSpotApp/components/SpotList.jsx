@@ -2,17 +2,15 @@
 
 import React from 'react';
 import {
-  Avatar,
   Button,
   Divider,
   Icon,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemText
 } from '@material-ui/core';
 
-import { Header } from '../containers/Login';
+import Header from './Header.jsx';
 import Loader from './Loader.jsx';
 import Footer from './Footer.jsx';
 import styles from '../styles/';
@@ -24,12 +22,12 @@ type Props = {
 class SpotList extends React.Component<Props> {
   constructor(props) {
     super(props);
-    props.loadSpotList();
+    props.loadSpotList('/assets/data/spot-data.json');
   }
 
   render() {
     const { props } = this;
-    const { password } = styles;
+    const { spotList } = styles;
 
     if (!props.spot.meta.isLoaded) {
       return (
@@ -41,16 +39,18 @@ class SpotList extends React.Component<Props> {
       <article>
         <Header />
 
-        <section className={password.main}>
+        <section className={spotList.main}>
           <List>
             {
-              props.spot.payload.data.spots.map(d => (
-                <section key={d.name}>
-                  <ListItem button>
-                    <ListItemAvatar>
-                      <Avatar>あ</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={d.name} />
+              Object.values(props.spot.payload.data.spot).map(d => (
+                <section key={d.id}>
+                  <ListItem button onClick={() => {
+                    props.history.push({
+                      pathname: '/detail/' + d.id,
+                      state: d
+                    });
+                  }}>
+                    <ListItemText primary={d.title} />
                   </ListItem>
                   <Divider />
                 </section>
@@ -59,7 +59,7 @@ class SpotList extends React.Component<Props> {
           </List>
         </section>
 
-        <section className={password.fab}>
+        <section className={spotList.fab}>
           <Button
             variant="fab"
             color="primary"
