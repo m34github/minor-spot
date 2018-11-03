@@ -1,4 +1,5 @@
 import axios from 'axios';
+import uuidv4 from 'uuid/v4';
 
 const ERROR = 'ERROR';
 const LOAD_SPOT_LIST = 'LOAD_SPOT_LIST';
@@ -23,7 +24,13 @@ const loadSpotList = (url) => (dispatch) => {
         error: err
       });
     });
-}
+};
+
+const registSpot = (spot) => (dispatch) => {
+  console.log(Object.assign({}, spot, {
+    id: uuidv4()
+  }));
+};
 
 const initialState = {
   payload: {
@@ -55,5 +62,5 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-export { loadSpotList };
+export { loadSpotList, registSpot };
 export default reducer;

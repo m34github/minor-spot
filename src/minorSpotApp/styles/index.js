@@ -46,6 +46,23 @@ const spotList = {
   })
 };
 
+const spotRegist = {
+  cover: css({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }),
+  main: css({
+    padding: '12px 24px 12px 24px',
+    paddingBottom: 56
+  }),
+  button: css({
+    position: 'fixed',
+    bottom: 0,
+    width: '100vw'
+  })
+};
+
 const footer = {
   root: css({
     position: 'fixed',
@@ -59,5 +76,6 @@ export default {
   header,
   loader,
   spotList,
+  spotRegist,
   footer
 };
