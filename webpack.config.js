@@ -23,6 +23,12 @@ module.exports = {
         ]
       },
       {
+        test: /\.html$/,
+        use: {
+          loader: 'html-loader'
+        },
+      },
+      {
         test: /\.js[x]?$/,
         exclude: /node_modules/,
         use: {
