@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 
+import Top from './components/Top.jsx';
 import { SpotList, SpotRegist } from './containers/';
 import SpotDetail from './components/SpotDetail.jsx';
 import store from './modules';
@@ -17,9 +18,10 @@ class MinorSpotApp extends React.Component {
         <MuiThemeProvider theme={theme}>
           <Router>
             <Switch>
-              <Route path="/" exact component={SpotList} />
-              <Route path="/detail/:id" component={SpotDetail} />
-              <Route path="/regist/" component={SpotRegist} />
+              <Route path="/" exact component={Top} />
+              <Route path="/spot/list" component={SpotList} />
+              <Route path="/spot/detail/:id" component={SpotDetail} />
+              <Route path="/spot/regist/" component={SpotRegist} />
               <Redirect to="/" />
             </Switch>
           </Router>
