@@ -3,6 +3,7 @@ import { Button, Icon, IconButton, Snackbar, TextField } from '@material-ui/core
 
 import Header from './Header.jsx';
 import styles from '../styles/';
+import EkiSpert from '../ekispert.html';
 
 class SpotRegist extends React.Component {
   constructor(props) {
@@ -117,6 +118,8 @@ class SpotRegist extends React.Component {
             登録
           </Button>
         </section>
+
+        <div dangerouslySetInnerHTML={ {__html: EkiSpert} } />
 
         <Snackbar
           anchorOrigin={{

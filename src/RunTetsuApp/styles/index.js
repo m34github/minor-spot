@@ -119,6 +119,5 @@ export default {
   spotList,
   spotDetail,
   spotRegist,
-  spotDetail,
   footer
 };
