@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {
+  Avatar,
   Button,
   Divider,
   Icon,
@@ -16,20 +17,29 @@ import Footer from './Footer.jsx';
 import styles from '../styles/';
 
 type Props = {
-  loadSpotList: func
+  loadSpots: func,
+  loadUsers: func
 };
 
 class SpotList extends React.Component<Props> {
   constructor(props) {
     super(props);
-    props.loadSpotList('/assets/data/spot-data.json');
+    props.loadSpots('/assets/data/spots.json');
+    props.loadUsers('/assets/data/users.json');
   }
 
   render() {
     const { props } = this;
     const { spotList } = styles;
 
-    if (!props.spot.meta.isLoaded) {
+    const getUser = (id) => {
+      const register = props.spot.payload.users.filter(user => { return (user.id === id) })[0];
+      return register.avatar ?
+        register.avatar :
+        'https://avatars.dicebear.com/v2/' + register.gender + '/' + register.name + '.svg';
+    };
+
+    if (!props.spot.meta.spotsIsLoaded || !props.spot.meta.usersIsLoaded) {
       return (
         <Loader />
       );
@@ -42,14 +52,15 @@ class SpotList extends React.Component<Props> {
         <section className={spotList.main}>
           <List>
             {
-              Object.values(props.spot.payload.data.spot).map(d => (
+              props.spot.payload.spots.map(d => (
                 <section key={d.id}>
                   <ListItem button onClick={() => {
                     props.history.push({
-                      pathname: '/detail/' + d.id,
+                      pathname: '/spot/detail/' + d.id,
                       state: d
                     });
                   }}>
+                    <Avatar src={getUser(d.register)} />
                     <ListItemText primary={d.title} />
                   </ListItem>
                   <Divider />
@@ -63,7 +74,7 @@ class SpotList extends React.Component<Props> {
           <Button
             variant="fab"
             color="primary"
-            onClick={() => { props.history.push('/regist'); }}
+            onClick={() => { props.history.push('/spot/regist'); }}
           >
             <Icon>add</Icon>
           </Button>
