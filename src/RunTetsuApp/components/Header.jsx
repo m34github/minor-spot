@@ -21,7 +21,7 @@ class Header extends React.Component {
                 </Icon>
               </IconButton>
               :
-              <IconButton disabled>
+              <IconButton onClick={() => { props.history.push('/'); }}>
                 <Icon />
               </IconButton>
             }
@@ -33,7 +33,7 @@ class Header extends React.Component {
               className={header.grow}
               style={{ fontFamily: '"Denk One", sans-serif' }}
             >
-              Minor Spot
+              RUN TETSU
             </Typography>
 
             <IconButton disabled>

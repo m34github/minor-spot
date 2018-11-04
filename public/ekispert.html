@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="canonical" href="https://rmap.ekispert.jp/sample/demo/route_search.html">
+    <!-- rosen.js -->
+    <link rel="stylesheet" href="https://rmap.ekispert.jp/production/rosen.css" />
+
+    <script src="https://rmap.ekispert.jp/production/rosen.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      var rosen;
+      var from_station_code = null; // 出発駅マーカーセット用の駅コード
+      var to_station_code = null;   // 到着駅マーカーセット用の駅コード
+      var condition = null;         // Webサービスの検索条件
+      var center_station_code;  // 中心にする駅
+
+      function init() {
+        rosen = new Rosen('map', {
+          apiKey: "eBBWPyXMYduCN759", // アクセスキーはサンプル用です。実際にご利用されるときは書き換えてください。
+          zoom: 16,
+          consoleViewControl: true
+        });
+
+        rosen.on('selectStation', function(data) {
+          if (data.stations[0]) {
+            var station = data.stations[0];
+
+            // ラジオボタンの値取得
+            var select_station = $('input[name=select_station]:checked').val();
+            if (select_station == 'from') {
+              // テキストボックスに駅名をセット
+              $('#from_station_name').val(station.name);
+
+              // 既に出発駅のマーカーがセットされているならマーカーを消す
+              if (from_station_code != null) {
+                rosen.unsetStationMarker(from_station_code);
+              }
+
+              // 出発駅マーカーセット
+              from_station_code = station.code;
+              rosen.setStationMarker(station.code);
+
+              // ラジオボタン切り替え
+              $('#select_station_to').prop('checked', true);
+            }
+            else if (select_station == 'to') {
+              // テキストボックスに駅名をセット
+              $('#to_station_name').val(station.name);
+
+              // 既に到着駅のマーカーがセットされているならマーカーを消す
+              if (to_station_code != null) {
+                rosen.unsetStationMarker(to_station_code);
+              }
+
+              // 到着駅マーカーセット
+              to_station_code = station.code;
+              rosen.setStationMarker(station.code);
+            }
+          }
+        });
+
+        // Webサービスの探索条件生成APIコール
+        // http://docs.ekispert.com/v1/api/toolbox/course/condition.html
+        var condition_params = {
+          "key"         : "eBBWPyXMYduCN759",
+          "plane"       : "never",
+          "highwayBus"  : "never",
+          "localBus"    : "never",
+          "midnightBus" : "never"
+        };
+        $.getJSON("https://api.ekispert.jp/v1/json/toolbox/course/condition", condition_params).done(function(data) {
+          condition = data.ResultSet.Condition;
+        }).fail(showWebServiceError);
+      };
+
+      function toArray(obj) {
+        if (!Array.isArray(obj)) {
+          return [obj];
+        }
+        else {
+          return obj;
+        }
+      }
+
+      function btnOnClick() {
+        if (condition == null) {
+          alert("Webサービスの検索条件が取得できていません");
+          return;
+        }
+
+        var from_station_name = $('#from_station_name').val();
+        var to_station_name   = $('#to_station_name').val();
+
+        rosen.clearAll();
+
+        // 経路探索APIに渡すパラメータを組み立てる
+        var params = {
+          "key"                    : "eBBWPyXMYduCN759",
+          "from"                   : from_station_name,
+          "to"                     : to_station_name,
+        };
+
+        // 駅すぱあとWebサービスの経路探索APIをコール
+        // http://docs.ekispert.com/v1/api/search/course/extreme.html
+        $.getJSON("https://api.ekispert.jp/v1/json/search/course/plain", params).done(function(data) {
+          console.log(data);
+
+
+          if (!(data.ResultSet.Course && data.ResultSet.Course[0])) {
+            alert("経路が見つかりませんでした");
+            return;
+          }
+
+          var serializeData = data.ResultSet.Course[0].SerializeData;
+
+          // Webサービスの駅情報APIコール
+          // http://docs.ekispert.com/v1/api/course/station.html
+          // 停車駅を取得
+          var station_params = {
+              "key"         : "eBBWPyXMYduCN759",
+              "serializeData": serializeData,
+          };
+
+          $.getJSON("https://api.ekispert.jp/v1/json/course/passStation", station_params).done(function(data) {
+            console.log("serializeの中身", data);
+            // マーカー設置
+            // 高速化のため、getStationsByCode()で一度にデータを取ってきてからsetStationMarker()する
+            var stop_station_codes = data.ResultSet.Point.map(function(point) {
+              return point.Station.code;
+            });
+            center_station_code = console.log(stop_station_codes);
+            center_station_code = stop_station_codes[0];
+            console.log(center_station_code)
+            rosen.getStationsByCode(stop_station_codes).then(function(stations) {
+              stations.forEach(function(station) {
+                rosen.setStationMarker(station.code);
+              });
+            });
+            // 出発駅へスクロール
+            console.log(center_station_code);
+            // rosen.setCenterByStationCode(center_station_code);
+            rosen.fitBoundsByStationCodes(stop_station_codes);
+            // 直線を引く
+            rosen.addPolyline(stop_station_codes, {color: "#0000ff", weight: 10, opacity: 0.5});
+          });
+        }).fail(showWebServiceError);
+
+        // マーカー設置用の駅コードをクリアしておく（他の出発駅・到着駅をクリックしたとき、今出ているものが消えないように）
+        from_station_code = null;
+        to_station_name = null;
+        // ラジオボタン切り替え
+        $('#select_station_from').prop('checked', true);
+      }
+
+      function showWebServiceError(error) {
+        console.log(error);
+
+        var msg = "Webサービスのコールでエラーが発生しました\n";
+        try {
+          var res = JSON.parse(error.responseText);
+          msg += res.ResultSet.Error.code + ":" + res.ResultSet.Error.Message;
+        } catch (e) {
+        }
+        alert(msg);
+      }
+
+      window.addEventListener('load', init);
+    </script>
+    <title>Ekispert</title>
+  </head>
+  <body>
+    <div style="width:100%; height:600px;;">
+      <div id="common_description">
+      </div>
+    <style>
+      #map { float:left; height: 100%; width: 100%;}
+    </style>
+    <div>
+      駅をクリックしたときどちらをセットしますか？：
+      <input type="radio" name="select_station" id="select_station_from" value="from" checked=""><label for="select_station_from">出発駅</label>
+      <input type="radio" name="select_station" id="select_station_to" value="to"><label for="select_station_to">到着駅</label>
+      <br>
+      出発駅：<input type="text" id="from_station_name" placeholder="駅名を入力してください" value="品川">
+      到着駅：<input type="text" id="to_station_name" placeholder="駅名を入力してください" value="京都">
+      <button onclick="btnOnClick()">経路探索</button>
+    </div>
+    <div id="map_message_100"></div>
+    <div id="map" class="leaflet-container leaflet-touch leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(0px, 0px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 0;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 16; transform: translate3d(0px, 0px, 0px) scale(1);"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/239_193.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 184px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/239_194.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 312px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/238_193.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 184px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/240_193.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 184px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/238_194.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 312px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/240_194.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 312px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/239_192.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 56px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/239_195.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 440px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/238_192.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 56px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/240_192.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 56px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/238_195.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 440px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/240_195.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 440px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/239_191.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, -72px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/239_196.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 568px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/238_191.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, -72px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/240_191.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, -72px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/238_196.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 568px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv3/17/240_196.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 568px, 0px); opacity: 1;"></div></div><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(0px, 0px, 0px) scale(1);"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/239_193.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 184px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/239_194.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 312px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/238_193.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 184px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/240_193.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 184px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/238_194.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 312px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/240_194.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 312px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/239_192.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 56px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/239_195.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 440px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/238_192.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 56px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/240_192.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 56px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/238_195.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 440px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/240_195.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 440px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/239_191.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, -72px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/239_196.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(123px, 568px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/238_191.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, -72px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/240_191.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, -72px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/238_196.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(-5px, 568px, 0px); opacity: 1;"><img alt="" role="presentation" src="https://rmap-ekispert.global.ssl.fastly.net/ja/main_opti/maketile/tile/lv4/17/240_196.png" class="leaflet-tile leaflet-tile-loaded" style="width: 128px; height: 128px; transform: translate3d(251px, 568px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-overlay-pane"></div><div class="leaflet-pane leaflet-marker-pane"></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(30640px, 24820px, 0px) scale(32768);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in">+</a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out">-</a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"><div class="leaflet-control-ConsoleView leaflet-control"><div class="line"><div class=""><span class="heading version-link">Version:</span></div><div class="version-value"></div></div><div class="line"><span class="heading">Center Position</span><span class="value">[30640, 24820, 16]</span></div></div></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control"><img class="ekispert_wakunashi" src="https://rmap.ekispert.jp/production/images/ekispert_wakunashi.svg"><div class="">© Val Laboratory Corporation</div></div></div></div></div>
+      </div>
+  </body>
+</html>

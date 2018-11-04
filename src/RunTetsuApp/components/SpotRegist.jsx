@@ -12,6 +12,8 @@ class SpotRegist extends React.Component {
       openRef: React.createRef(),
       closeRef: React.createRef(),
       placeRef: React.createRef(),
+      fromRef: React.createRef(),
+      toRef: React.createRef(),
       open: false
     };
   }
@@ -36,14 +38,7 @@ class SpotRegist extends React.Component {
       <article>
         <Header sub={true} />
 
-        <section
-          style={{
-            background: 'url(http://source.unsplash.com/tvc5imO5pXk/800x450) center / cover',
-            width: '100vw',
-            height: '25vh'
-          }}
-          className={spotRegist.cover}
-        >
+        <section className={spotRegist.cover}>
           <TextField
             label="タイトル"
             variant="filled"

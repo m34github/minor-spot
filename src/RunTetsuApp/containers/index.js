@@ -9,8 +9,11 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  loadSpotList: (url) => {
-    dispatch(module.loadSpotList(url));
+  loadSpots: (url) => {
+    dispatch(module.loadSpots(url));
+  },
+  loadUsers: (url) => {
+    dispatch(module.loadUsers(url));
   },
   registSpot: (spot) => {
     dispatch(module.registSpot(spot));
