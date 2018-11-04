@@ -16,6 +16,27 @@ const theme = createMuiTheme({
   }
 });
 
+const top = {
+  root: css({
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    padding: '0 10vw 0 10vw'
+  }),
+  paper: {
+    background: 'rgba(255, 255, 255, 0.8)',
+    padding: '5vh 10vw 5vh 10vw'
+  },
+  textField: css({
+    paddingBottom: '5vh'
+  }),
+  backdrop: css({
+    background: 'url(/assets/img/misc/top-2.jpg) center / cover'
+  })
+};
+
 const header = {
   root: css({
     flexGrow: 1
@@ -50,7 +71,10 @@ const spotRegist = {
   cover: css({
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    background: 'url(/assets/img/misc/cover.jpg) center / cover',
+    width: '100vw',
+    height: '25vh'
   }),
   main: css({
     padding: '12px 24px 12px 24px',
@@ -73,6 +97,7 @@ const footer = {
 
 export default {
   theme,
+  top,
   header,
   loader,
   spotList,

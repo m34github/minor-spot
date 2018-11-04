@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from './minorSpotApp/index.jsx';
+import App from './RunTetsuApp/index.jsx';
 
 ReactDOM.render(
   <App />,
