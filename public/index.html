@@ -21,7 +21,28 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="/assets/css/master.css">
-    <title>RUN TETSU</title>
+
+    <script type="text/javascript">
+
+      var rosen;
+      var markers = []; // 立てたマーカーを記憶しておく変数
+      
+      function init() {
+        rosen = new Rosen("map", {
+          apiKey: "eBBWPyXMYduCN759", // アクセスキーはサンプル用です。実際にご利用されるときは書き換えてください。
+          centerStation: 22917,     // 中心の駅コード
+          zoom: 16,
+          consoleViewControl: true
+        });
+      
+        // データベースからJSONでかえってきた、駅すぱあと配列をセット
+        rosen.highlightSections([3390190, 3280140, 3280160, 3280180, 3280200, 3280220, 3280240, 3280260, 3280280]);
+      }
+      
+      window.addEventListener('load', init);
+      
+      </script>
+<title>RUN TETSU</title>
   </head>
   <body>
     <article id="root"></article>
