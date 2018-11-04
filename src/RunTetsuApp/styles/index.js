@@ -67,6 +67,22 @@ const spotList = {
   })
 };
 
+const spotDetail = {
+  cover: css({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }),
+  main: css({
+    padding: '12px 24px 12px 24px'
+  }),
+  button: css({
+    position: 'fixed',
+    bottom: 0,
+    width: '100vw'
+  })
+};
+
 const spotRegist = {
   cover: css({
     display: 'flex',
@@ -101,6 +117,8 @@ export default {
   header,
   loader,
   spotList,
+  spotDetail,
   spotRegist,
+  spotDetail,
   footer
 };
