@@ -45,5 +45,6 @@ module.exports = {
     contentBase: path.join(__dirname, 'public'),
     historyApiFallback: true,
     port: 3000
-  }
+  },
+  devtool: 'cheap-module-source-map'
 };

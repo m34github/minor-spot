@@ -1,13 +1,11 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { Button, Icon, IconButton, Snackbar, TextField } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 
 import Header from './Header.jsx';
-import Footer from './Footer.jsx';
 import styles from '../styles/';
 
 class SpotDetail extends React.Component {
-
   render() {
     const { props } = this;
     const { spotDetail } = styles;

@@ -103,6 +103,18 @@ const spotRegist = {
   })
 };
 
+const routeSelect = {
+  map: css`
+    height: calc(100vh - 88px);
+    width: 100vw;
+  `,
+  button: css({
+    position: 'fixed',
+    bottom: 0,
+    width: '100vw'
+  })
+};
+
 const footer = {
   root: css({
     position: 'fixed',
@@ -119,5 +131,6 @@ export default {
   spotList,
   spotDetail,
   spotRegist,
+  routeSelect,
   footer
 };

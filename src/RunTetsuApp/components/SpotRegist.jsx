@@ -1,9 +1,15 @@
 import React from 'react';
-import { Button, Icon, IconButton, Snackbar, TextField } from '@material-ui/core';
+import {
+  Button,
+  Grid,
+  Icon,
+  IconButton,
+  Snackbar,
+  TextField
+} from '@material-ui/core';
 
 import Header from './Header.jsx';
 import styles from '../styles/';
-import EkiSpert from '../ekispert.html';
 
 class SpotRegist extends React.Component {
   constructor(props) {
@@ -13,8 +19,6 @@ class SpotRegist extends React.Component {
       openRef: React.createRef(),
       closeRef: React.createRef(),
       placeRef: React.createRef(),
-      fromRef: React.createRef(),
-      toRef: React.createRef(),
       open: false
     };
   }
@@ -88,13 +92,30 @@ class SpotRegist extends React.Component {
               step: 300, // 5 min
             }}
           />
-          <TextField
-            label="場所"
-            margin="dense"
-            required
-            fullWidth
-            inputRef={state.placeRef}
-          />
+
+          <Grid container alignItems="center">
+            <Grid item xs={9}>
+              <TextField
+                label="場所"
+                margin="dense"
+                required
+                fullWidth
+                inputRef={state.placeRef}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                fullWidth
+                onClick={() => { props.history.push('/route/select'); }}
+              >
+                選択
+              </Button>
+            </Grid>
+          </Grid>
         </section>
 
         <section className={spotRegist.button}>
@@ -118,8 +139,6 @@ class SpotRegist extends React.Component {
             登録
           </Button>
         </section>
-
-        <div dangerouslySetInnerHTML={ {__html: EkiSpert} } />
 
         <Snackbar
           anchorOrigin={{

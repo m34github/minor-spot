@@ -31,7 +31,7 @@ class Header extends React.Component {
               variant="h5"
               color="textPrimary"
               className={header.grow}
-              style={{ fontFamily: '"Denk One", sans-serif' }}
+              style={{ fontFamily: '"Bungee Inline", cursive' }}
             >
               RUN TETSU
             </Typography>
