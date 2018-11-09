@@ -4,9 +4,8 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import { MuiThemeProvider } from '@material-ui/core/styles';
 
 import Top from './components/Top.jsx';
-import { SpotList, SpotRegist } from './containers/';
-import SpotDetail from './components/SpotDetail.jsx';
-import RouteSelect from './components/RouteSelect.jsx';
+import { SpotList, SpotDetail, SpotRegist, RouteSelect } from './containers/';
+import SpotDetailSample from './components/SpotDetailSample.jsx';
 import store from './modules';
 import styles from './styles/';
 
@@ -21,7 +20,8 @@ class MinorSpotApp extends React.Component {
             <Switch>
               <Route path="/" exact component={Top} />
               <Route path="/spot/list" component={SpotList} />
-              <Route path="/spot/detail/:id" component={SpotDetail} />
+              <Route path="/spot/detail/:id" exact component={SpotDetail} />
+              <Route path="/spot/detail/sample/:id" component={SpotDetailSample} />
               <Route path="/spot/regist/" component={SpotRegist} />
               <Route path="/route/select/" component={RouteSelect} />
               <Redirect to="/" />

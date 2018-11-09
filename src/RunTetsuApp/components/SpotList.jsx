@@ -39,7 +39,9 @@ class SpotList extends React.Component<Props> {
         'https://avatars.dicebear.com/v2/' + register.gender + '/' + register.name + '.svg';
     };
 
-    if (!props.spot.meta.spotsIsLoaded || !props.spot.meta.usersIsLoaded) {
+    if (!props.spot.meta.spotsIsLoaded
+      || !props.spot.meta.usersIsLoaded
+      || !props.spot.meta.fbIsLoaded) {
       return (
         <Loader />
       );
@@ -51,21 +53,38 @@ class SpotList extends React.Component<Props> {
 
         <section className={spotList.main}>
           <List>
+            <ListItem button onClick={() => {
+              props.history.push({
+                pathname: '/spot/detail/sample/' + props.spot.payload.spots[0].id,
+                state: props.spot.payload.spots[0]
+              });
+            }}>
+              <Avatar src={getUser(props.spot.payload.spots[0].register)} />
+              <ListItemText primary={props.spot.payload.spots[0].title} />
+            </ListItem>
+            <Divider />
+
             {
-              props.spot.payload.spots.map(d => (
-                <section key={d.id}>
-                  <ListItem button onClick={() => {
-                    props.history.push({
-                      pathname: '/spot/detail/' + d.id,
-                      state: d
-                    });
-                  }}>
-                    <Avatar src={getUser(d.register)} />
-                    <ListItemText primary={d.title} />
-                  </ListItem>
-                  <Divider />
-                </section>
-              ))
+              Object.keys(props.spot.payload.fbSpots).map(key => {
+                const spot = props.spot.payload.fbSpots[key];
+
+                return (
+                  <section key={key}>
+                    <ListItem button onClick={() => {
+                      props.history.push({
+                        pathname: '/spot/detail/' + key,
+                        state: spot
+                      });
+                    }}>
+                      <Avatar src={'https://avatars.dicebear.com/v2/'
+                        + spot.register.gender + '/'
+                        + spot.register.name + '.svg'} />
+                      <ListItemText primary={spot.title} />
+                    </ListItem>
+                    <Divider />
+                  </section>
+                );
+              })
             }
           </List>
         </section>

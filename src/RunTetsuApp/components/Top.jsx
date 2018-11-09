@@ -5,8 +5,16 @@ import { Button, Backdrop, Paper, TextField, Typography } from '@material-ui/cor
 import styles from '../styles/';
 
 class Top extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: React.createRef(),
+      pw: React.createRef()
+    };
+  }
+
   render() {
-    const { props } = this;
+    const { props, state } = this;
     const { top } = styles;
 
     return (
@@ -20,6 +28,7 @@ class Top extends React.Component {
               defaultValue="demo@email.com"
               fullWidth
               margin="dense"
+              inputRef={state.id}
             />
             <TextField
               label="Password"
@@ -27,6 +36,7 @@ class Top extends React.Component {
               defaultValue="password"
               fullWidth
               margin="dense"
+              inputRef={state.pw}
             />
           </section>
 
@@ -34,7 +44,11 @@ class Top extends React.Component {
             variant="contained"
             color="primary"
             fullWidth
-            onClick={() => { props.history.push('/spot/list'); }}
+            onClick={() => {
+              if (state.id.current.value === 'demo@email.com' && state.pw.current.value === 'password') {
+                props.history.push('/spot/list');
+              }
+            }}
           >
             Login
           </Button>

@@ -16,16 +16,37 @@ class SpotRegist extends React.Component {
     super(props);
     this.state = {
       titleRef: React.createRef(),
-      openRef: React.createRef(),
-      closeRef: React.createRef(),
-      placeRef: React.createRef(),
+      dateRef: React.createRef(),
+      startRef: React.createRef(),
+      endRef: React.createRef(),
       open: false
     };
+  }
+
+  componentDidMount() {
+    const { props } = this;
+    const { route } = props.spot.payload;
+    let rosen;
+
+    const init = () => {
+      rosen = new window.Rosen('map', {
+        apiKey: 'eBBWPyXMYduCN759',
+        zoom: 16,
+        centerStation: route.length >= 1 ? route[0] : 23368
+      });
+      route.forEach(r => {
+        rosen.setStationMarker(r);
+      });
+      rosen.addPolyline(route, { color: "#f06000", weight: 10, opacity: 0.8 });
+    }
+
+    init();
   }
 
   render() {
     const { props, state } = this;
     const { spotRegist } = styles;
+    const { route } = props.spot.payload;
 
     const handleOpen = () => {
       this.setState({
@@ -37,6 +58,21 @@ class SpotRegist extends React.Component {
       this.setState({
         open: false
       });
+    };
+
+    const regist = () => {
+      if (state.titleRef.current.value && route.length >= 2) {
+        props.registSpot({
+          title: state.titleRef.current.value,
+          date: state.dateRef.current.value,
+          start: state.startRef.current.value,
+          end: state.endRef.current.value,
+          route
+        });
+        props.history.goBack();
+      } else {
+        handleOpen();
+      }
     };
 
     return (
@@ -65,78 +101,98 @@ class SpotRegist extends React.Component {
 
         <section className={spotRegist.main}>
           <TextField
-            label="オープン"
-            type="time"
-            defaultValue="09:00"
-            margin="dense"
+            label="イベント開催日"
+            type="date"
+            defaultValue="2018-11-10"
             fullWidth
-            inputRef={state.openRef}
+            inputRef={state.dateRef}
             InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 300, // 5 min
-            }}
-          />
-          <TextField
-            label="クローズ"
-            type="time"
-            defaultValue="18:00"
-            margin="dense"
-            fullWidth
-            inputRef={state.closeRef}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 300, // 5 min
+              shrink: true
             }}
           />
 
-          <Grid container alignItems="center">
-            <Grid item xs={9}>
+          <Grid container spacing={16}>
+            <Grid item xs={6}>
               <TextField
-                label="場所"
-                margin="dense"
-                required
+                label="集合時刻"
+                type="time"
+                defaultValue="09:00"
                 fullWidth
-                inputRef={state.placeRef}
-                disabled
+                margin="dense"
+                inputRef={state.startRef}
+                InputLabelProps={{
+                  shrink: true
+                }}
+                inputProps={{
+                  step: 300 // 5 min
+                }}
               />
             </Grid>
-            <Grid item xs={3}>
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
+            <Grid item xs={6}>
+              <TextField
+                label="解散時刻"
+                type="time"
+                defaultValue="18:00"
                 fullWidth
-                onClick={() => { props.history.push('/route/select'); }}
-              >
-                選択
-              </Button>
+                margin="dense"
+                inputRef={state.endRef}
+                InputLabelProps={{
+                  shrink: true
+                }}
+                inputProps={{
+                  step: 300 // 5 min
+                }}
+              />
             </Grid>
           </Grid>
+
+          <Grid container spacing={16}>
+            <Grid item xs={6}>
+              <TextField
+                label="スタート"
+                required
+                fullWidth
+                disabled
+                defaultValue={route.length >= 1 ? route[0] : 'スタートが未選択'}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="ゴール"
+                required
+                fullWidth
+                disabled
+                defaultValue={route.length >= 2 ? route[route.length - 1] : 'ゴールが未選択'}
+              />
+            </Grid>
+          </Grid>
+
+          <section className={spotRegist.selectButton}>
+            <Button
+              variant="contained"
+              color="default"
+              size="small"
+              fullWidth
+              onClick={() => { props.history.push('/route/select'); }}
+            >
+              ルートを選択する
+            </Button>
+          </section>
+
+          <section className={spotRegist.mapSection}>
+            <section id="map" className={spotRegist.map} />
+          </section>
         </section>
 
         <section className={spotRegist.button}>
           <Button
             variant="contained"
             color="primary"
+            size="large"
             fullWidth
-            onClick={() => {
-              if (state.titleRef.current.value && state.placeRef.current.value) {
-                props.registSpot({
-                  title: state.titleRef.current.value,
-                  open: state.openRef.current.value,
-                  close: state.closeRef.current.value,
-                  place: state.placeRef.current.value
-                });
-              } else {
-                handleOpen();
-              }
-            }}
+            onClick={regist}
           >
-            登録
+            ルートを登録
           </Button>
         </section>
 

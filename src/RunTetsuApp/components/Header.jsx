@@ -11,7 +11,7 @@ class Header extends React.Component {
 
     return (
       <section className={header.root}>
-        <AppBar color="default" position="static">
+        <AppBar color="secondary" position="static">
           <Toolbar variant="dense">
             {
               props.sub ?
@@ -29,7 +29,7 @@ class Header extends React.Component {
             <Typography
               align="center"
               variant="h5"
-              color="textPrimary"
+              color="inherit"
               className={header.grow}
               style={{ fontFamily: '"Bungee Inline", cursive' }}
             >

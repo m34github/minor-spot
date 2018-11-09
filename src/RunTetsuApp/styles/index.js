@@ -5,7 +5,10 @@ import { css } from 'emotion';
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: colors.lightBlue[600]
+      main: colors.deepOrange.A400
+    },
+    secondary: {
+      main: colors.grey[900]
     },
     text: {
       primary: colors.blueGrey[900]
@@ -71,6 +74,30 @@ const spotDetail = {
   cover: css({
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
+    background: 'url(/assets/img/misc/cover.jpg) center / cover',
+    width: '100vw',
+    height: '20vh'
+  }),
+  main: css({
+    padding: '12px 24px 12px 24px'
+  }),
+  abstract: css({
+    padding: '6px 0 12px 0'
+  }),
+  course: css({
+    padding: '6px 0 12px 0'
+  }),
+  map: css({
+    height: '30vh',
+    width: '100%'
+  })
+};
+
+const spotDetailSample = {
+  cover: css({
+    display: 'flex',
+    justifyContent: 'center',
     alignItems: 'center'
   }),
   main: css({
@@ -90,11 +117,22 @@ const spotRegist = {
     alignItems: 'center',
     background: 'url(/assets/img/misc/cover.jpg) center / cover',
     width: '100vw',
-    height: '25vh'
+    height: '20vh'
   }),
   main: css({
     padding: '12px 24px 12px 24px',
     paddingBottom: 56
+  }),
+  selectButton: css({
+    paddingTop: 12
+  }),
+  mapSection: css({
+    paddingTop: 12
+  }),
+  map: css({
+    background: '#c0c0c0',
+    height: '30vh',
+    width: '100%'
   }),
   button: css({
     position: 'fixed',
@@ -130,6 +168,7 @@ export default {
   loader,
   spotList,
   spotDetail,
+  spotDetailSample,
   spotRegist,
   routeSelect,
   footer

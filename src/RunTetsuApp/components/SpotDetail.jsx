@@ -1,18 +1,42 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { TextField } from '@material-ui/core';
+import { Grid, TextField, Typography } from '@material-ui/core';
 
 import Header from './Header.jsx';
 import styles from '../styles/';
 
 class SpotDetail extends React.Component {
+  componentDidMount() {
+    const { props } = this;
+
+    if (props.location.state) {
+      const { route } = props.location.state;
+      let rosen;
+
+      const init = () => {
+        rosen = new window.Rosen('map', {
+          apiKey: 'eBBWPyXMYduCN759',
+          zoom: 15,
+          centerStation: route.length >= 1 ? route[0] : 23368
+        });
+        route.forEach(r => {
+          rosen.setStationMarker(r);
+        });
+        rosen.addPolyline(route, { color: "#f06000", weight: 10, opacity: 0.8 });
+      }
+
+      init();
+    }
+  }
+
   render() {
     const { props } = this;
     const { spotDetail } = styles;
+    const spot = props.location.state;
 
     if (!props.location.state) {
       return (
-        <Redirect to="/" />
+        <Redirect to="/spot/list" />
       );
     }
 
@@ -20,74 +44,67 @@ class SpotDetail extends React.Component {
       <article>
         <Header sub={true} />
 
-       <section
-          style={{
-            background: 'url(https://upload.wikimedia.org/wikipedia/commons/5/54/Yurikamome7300wiki.jpg) center / cover',
-            width: '100vw',
-            height: '25vh'
-          }}
-          className={spotDetail.cover}
-        >
+        <section className={spotDetail.cover}>
+          <TextField
+            variant="filled"
+            required
+            disabled
+            defaultValue={spot.title}
+            InputLabelProps={{
+              style: {
+                color: '#fff'
+              }
+            }}
+            InputProps={{
+              style: {
+                color: '#fff',
+                fontSize: 'x-large'
+              }
+            }}
+          />
         </section>
+
         <section className={spotDetail.main}>
-          <TextField
-            label="開催日時"
-            type="date"
-            defaultValue="2018-11-12"
-            margin="dense"
-            fullWidth
-
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 300, // 5 min
-            }}
-          />
-          <TextField
-            label="開始時刻"
-            type="time"
-            value="02:00"
-            margin="dense"
-            fullWidth
-
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 300, // 5 min
-            }}
-          />
+          <Typography variant="h6">イベント概要</Typography>
+          <section className={spotDetail.abstract}>
             <TextField
-            label="終了時刻"
-            type="time"
-            value="04:00"
-            margin="dense"
-            fullWidth
-          />
-          <TextField
-            label="開催概要"
-            type="text"
-            value="終電終了後の深夜のゆりかもめ、新橋駅〜芝浦駅までを３キロのランニングコースを設定しました。午前２時から４時までの２時間で非日常の東京を楽しみましょう"
-            margin="dense"
-            multiline={true}
-            fullWidth
-            variant="outlined"
-          />
-
+              label="イベント開催日"
+              type="date"
+              fullWidth
+              defaultValue={spot.date}
+              margin="dense"
+              disabled
+            />
+            <Grid container spacing={16}>
+              <Grid item xs={6}>
+                <TextField
+                  label="集合時刻"
+                  type="time"
+                  fullWidth
+                  defaultValue={spot.start}
+                  margin="dense"
+                  disabled
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="解散時刻"
+                  type="time"
+                  fullWidth
+                  defaultValue={spot.end}
+                  margin="dense"
+                  disabled
+                />
+              </Grid>
+            </Grid>
           </section>
-          <section
-            style={{
-              paddingLeft: '0vw',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingBottom: 56
-            }}
-          >
 
-          <iframe title="youtube" src="https://www.youtube.com/embed/y57nOtkYtWA" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+          <Typography variant="h6">コース</Typography>
+          <section className={spotDetail.course}>
+            <section id="map" className={spotDetail.map} />
+          </section>
         </section>
+
       </article>
     );
   }

@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { Button } from '@material-ui/core';
 import * as R from 'ramda';
@@ -5,21 +7,32 @@ import * as R from 'ramda';
 import Header from './Header.jsx';
 import styles from '../styles/'
 
-class RouteSelect extends React.Component {
+type Props = {
+  spot: object
+};
+
+class RouteSelect extends React.Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
-      stations: []
+      stations: props.spot.payload.route
     };
   }
 
   componentDidMount() {
+    const { props, state } = this;
     let rosen;
-    let stations = [];
+    let { stations } = state;
 
     const init = () => {
       rosen = new window.Rosen('map', {
-        apiKey: 'eBBWPyXMYduCN759'
+        apiKey: 'eBBWPyXMYduCN759',
+        zoom: 16,
+        centerStation: stations.length >= 1 ? stations[0] : 23368
+      });
+
+      props.spot.payload.route.forEach(route => {
+        rosen.setStationMarker(route);
       });
 
       rosen.on('selectStation', (data) => {
@@ -35,10 +48,10 @@ class RouteSelect extends React.Component {
             rosen.setStationMarker(station.code);
           }
         }
-      });
 
-      this.setState({
-        stations
+        this.setState({
+          stations
+        });
       });
     };
 
@@ -46,8 +59,13 @@ class RouteSelect extends React.Component {
   }
 
   render() {
-    const { state } = this;
+    const { props, state } = this;
     const { routeSelect } = styles;
+
+    const select = () => {
+      props.selectRoute(state.stations);
+      props.history.goBack();
+    };
 
     return (
       <article>
@@ -63,9 +81,9 @@ class RouteSelect extends React.Component {
             color="primary"
             size="large"
             fullWidth
-            onClick={() => { console.log(state.stations); }}
+            onClick={select}
           >
-            submit
+            ルート決定
           </Button>
         </section>
       </article>
